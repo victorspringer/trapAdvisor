@@ -3,6 +3,14 @@ language: go
 go:
   - 1.8
 
+services:
+  - mysql
+
+sudo: true
+
+before_script:
+  - bash .travis.install-mysql-5.7.sh
+
 script:
   - make build
   - make test
