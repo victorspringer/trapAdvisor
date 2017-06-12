@@ -3,8 +3,6 @@ package persistence
 import (
 	"testing"
 
-	"fmt"
-
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/victorspringer/trapAdvisor/database"
 	ta "github.com/victorspringer/trapAdvisor/touristattraction"
