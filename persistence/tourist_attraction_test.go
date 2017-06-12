@@ -3,6 +3,8 @@ package persistence
 import (
 	"testing"
 
+	"fmt"
+
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/victorspringer/trapAdvisor/database"
 	ta "github.com/victorspringer/trapAdvisor/touristattraction"
@@ -95,6 +97,7 @@ func TestTouristAttractionRepository(t *testing.T) {
 			t.Errorf("touristAttractionRepository.FindMostVisited() error = %v, wantErr %v", err, tt.wantErr)
 			return
 		}
+		fmt.Println(tasMostVisited[0][0], tasMostVisited[0][1], tasMostVisited[1][0], tasMostVisited[1][1])
 		if tasMostVisited[0][0] != tt.wantName {
 			t.Errorf("invalid result")
 			return
