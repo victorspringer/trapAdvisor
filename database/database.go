@@ -10,7 +10,7 @@ const (
 	user     = "root"
 	password = ""
 	protocol = "tcp"
-	address  = "127.0.0.1"
+	address  = "localhost"
 	port     = "3306"
 )
 
