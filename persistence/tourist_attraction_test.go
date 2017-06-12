@@ -1,7 +1,6 @@
 package persistence
 
 import (
-	"fmt"
 	"testing"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -97,7 +96,6 @@ func TestTouristAttractionRepository(t *testing.T) {
 			return
 		}
 		if tasMostVisited[0][0] != tt.wantName {
-			fmt.Println(tasMostVisited[0][0], tt.wantName)
 			t.Errorf("invalid result")
 			return
 		}

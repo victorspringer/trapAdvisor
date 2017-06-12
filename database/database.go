@@ -156,6 +156,13 @@ func Init(env string) (*sql.DB, error) {
 		if err != nil {
 			return nil, err
 		}
+
+		_, err = db.Exec(
+			"INSERT INTO touristAttraction VALUES (2, 'Test', 'Test', '2017-05-30', 5, 'Bla', 'Ble', 1)",
+		)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return db, nil
