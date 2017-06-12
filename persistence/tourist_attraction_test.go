@@ -3,6 +3,7 @@ package persistence
 import (
 	"testing"
 
+	"github.com/davecgh/go-spew/spew"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/victorspringer/trapAdvisor/database"
 	ta "github.com/victorspringer/trapAdvisor/touristattraction"
@@ -96,6 +97,7 @@ func TestTouristAttractionRepository(t *testing.T) {
 			return
 		}
 		if tasMostVisited[0][0] != tt.wantName {
+			spew.Dump(tasMostVisited, tt.wantName)
 			t.Errorf("invalid result")
 			return
 		}
