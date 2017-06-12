@@ -3,8 +3,6 @@ package persistence
 import (
 	"strconv"
 
-	"fmt"
-
 	"github.com/victorspringer/trapAdvisor/database"
 	ta "github.com/victorspringer/trapAdvisor/touristattraction"
 )
@@ -19,7 +17,7 @@ func (r *touristAttractionRepository) Store(t *ta.TouristAttraction) error {
 		return err
 	}
 	defer insert.Close()
-	fmt.Println("")
+
 	_, err = insert.Exec(nil, t.Name, t.Location, t.VisitDate, t.Rating, t.Pros, t.Cons, t.TripID)
 	if err != nil {
 		return err
