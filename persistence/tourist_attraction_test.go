@@ -97,7 +97,6 @@ func TestTouristAttractionRepository(t *testing.T) {
 			t.Errorf("touristAttractionRepository.FindMostVisited() error = %v, wantErr %v", err, tt.wantErr)
 			return
 		}
-		fmt.Println(tasMostVisited[0][0], ":", tasMostVisited[0][2], tasMostVisited[1][0], ":", tasMostVisited[1][2])
 		if tasMostVisited[0][0] != tt.wantName {
 			t.Errorf("invalid result")
 			return
