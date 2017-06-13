@@ -32,8 +32,8 @@ type service struct {
 func NewService() Service {
 	return &service{
 		config: &oauth2.Config{
-			ClientID:     "CLIENT_ID",
-			ClientSecret: "CLIENT_SECRET",
+			ClientID:     "1236768193100317",
+			ClientSecret: "0cb38c734be6524d3787e15a1d1e1945",
 			RedirectURL:  domain + "/auth_callback",
 			Scopes:       []string{"public_profile", "user_friends"},
 			Endpoint:     facebook.Endpoint,

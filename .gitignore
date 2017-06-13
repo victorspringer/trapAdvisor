@@ -1,3 +1,4 @@
+authenticating/service.go
 dist/
 *.vscode
 readme.ignored
