@@ -3,7 +3,7 @@ package traveller
 // Traveller class.
 type Traveller struct {
 	Name string `json:"name"`
-	ID   int    `json:"id"`
+	ID   int    `json:"id,string"`
 }
 
 // Repository provides access to a Traveller store.

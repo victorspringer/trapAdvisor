@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/victorspringer/trapAdvisor/authenticating"
 	"github.com/victorspringer/trapAdvisor/handling"
 	"github.com/victorspringer/trapAdvisor/persistence"
 )
@@ -21,20 +22,25 @@ type route struct {
 func Router() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
 
+	aSvc := authenticating.NewService()
+
 	hSvc := handling.NewService(
 		persistence.NewTripRepository(), persistence.NewTouristAttractionRepository(),
 	)
 
 	routes := []route{
-		route{"POST", "/v1/trip/store", "StoreTrip", hSvc.StoreTrip},
-		route{"POST", "/v1/ta/store", "StoreTouristAttraction", hSvc.StoreTouristAttraction},
-		route{"GET", "/v1/trip/find/{id}", "FindTrip", hSvc.FindTrip},
-		route{"GET", "/v1/trip/find/traveller/{id}", "FindTripByTravellerID", hSvc.FindTripByTravellerID},
-		route{"GET", "/v1/ta/find/{id}", "FindTouristAttraction", hSvc.FindTouristAttraction},
-		route{"GET", "/v1/ta/find/trip/{id}", "FindTouristAttractionByTripID", hSvc.FindTouristAttractionByTripID},
-		route{"GET", "/v1/ta/find/name_part/{namePart}", "FindTouristAttractionByNamePart", hSvc.FindTouristAttractionByNamePart},
-		route{"GET", "/v1/ta/most_visited", "FindMostVisitedTouristAttractions", hSvc.FindMostVisitedTouristAttractions},
-		route{"GET", "/v1/ta/best_rated", "FindBestRatedTouristAttractions", hSvc.FindBestRatedTouristAttractions},
+		route{"GET", "/login", "Login", aSvc.HandleFacebookLogin},
+		route{"GET", "/auth_callback", "AuthCallback", aSvc.HandleFacebookCallback},
+		route{"GET", "/logout", "Logout", aSvc.HandleFacebookLogout},
+		route{"POST", "/v1/trip/store", "StoreTrip", aSvc.AuthMiddleware(hSvc.StoreTrip)},
+		route{"POST", "/v1/ta/store", "StoreTouristAttraction", aSvc.AuthMiddleware(hSvc.StoreTouristAttraction)},
+		route{"GET", "/v1/trip/find/{id}", "FindTrip", aSvc.AuthMiddleware(hSvc.FindTrip)},
+		route{"GET", "/v1/trip/find/traveller/{id}", "FindTripByTravellerID", aSvc.AuthMiddleware(hSvc.FindTripByTravellerID)},
+		route{"GET", "/v1/ta/find/{id}", "FindTouristAttraction", aSvc.AuthMiddleware(hSvc.FindTouristAttraction)},
+		route{"GET", "/v1/ta/find/trip/{id}", "FindTouristAttractionByTripID", aSvc.AuthMiddleware(hSvc.FindTouristAttractionByTripID)},
+		route{"GET", "/v1/ta/find/name_part/{namePart}", "FindTouristAttractionByNamePart", aSvc.AuthMiddleware(hSvc.FindTouristAttractionByNamePart)},
+		route{"GET", "/v1/ta/most_visited", "FindMostVisitedTouristAttractions", aSvc.AuthMiddleware(hSvc.FindMostVisitedTouristAttractions)},
+		route{"GET", "/v1/ta/best_rated", "FindBestRatedTouristAttractions", aSvc.AuthMiddleware(hSvc.FindBestRatedTouristAttractions)},
 	}
 
 	for _, route := range routes {
