@@ -1,13 +1,11 @@
 package authenticating
 
 import (
+	"fmt"
 	"net/http"
 
-	uuid "github.com/satori/go.uuid"
-
-	"fmt"
-
 	fb "github.com/huandu/facebook"
+	uuid "github.com/satori/go.uuid"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/facebook"
 )

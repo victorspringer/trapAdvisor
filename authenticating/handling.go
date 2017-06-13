@@ -2,23 +2,20 @@ package authenticating
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
-
-	"golang.org/x/oauth2"
-
-	"strconv"
-
-	"errors"
 
 	fb "github.com/huandu/facebook"
 	"github.com/victorspringer/trapAdvisor/friendship"
 	"github.com/victorspringer/trapAdvisor/persistence"
 	"github.com/victorspringer/trapAdvisor/traveller"
+	"golang.org/x/oauth2"
 )
 
 func (s *service) HandleFacebookLogin(w http.ResponseWriter, r *http.Request) {
