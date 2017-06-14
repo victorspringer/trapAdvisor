@@ -12,8 +12,8 @@ import (
 
 const (
 	domain       = "http://localhost:8080"
-	clientID     = "CLIENT_ID"
-	clientSecret = "CLIENT_SECRET"
+	clientID     = "1236768193100317"
+	clientSecret = "0cb38c734be6524d3787e15a1d1e1945"
 )
 
 // Service is the interface that provides Facebook authentication methods.
