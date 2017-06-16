@@ -1,6 +1,6 @@
 test:
 	export DOMAIN="localhost:8080" && \
-	export PORT=":8080" && \
+	export PORT="8080" && \
 	export DB_USER="root" && \
 	export DB_PASS="" && \
 	export DB_ADDR="localhost" && \
@@ -10,7 +10,7 @@ test:
 	go test -v -race $$(go list ./... | grep -v /vendor/)
 test-fast:
 	export DOMAIN="localhost:8080" && \
-	export PORT=":8080" && \
+	export PORT="8080" && \
 	export DB_USER="root" && \
 	export DB_PASS="" && \
 	export DB_ADDR="localhost" && \
@@ -22,7 +22,7 @@ build:
 	go get && go build -v -o bin/application
 start:
 	export DOMAIN="localhost:8080" && \
-	export PORT=":8080" && \
+	export PORT="8080" && \
 	export DB_USER="root" && \
 	export DB_PASS="" && \
 	export DB_ADDR="localhost" && \
