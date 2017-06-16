@@ -5,9 +5,8 @@ This API is the result of the final task for the Information Systems subject "Pr
 It is built with Golang (under Domain Driven Design concept) and MySQL.
 
 ## Getting started
-Before starting the server, you will probably need to configure the database settings properly. In order to do it, you must go to `database/database.go` and change the constants (`user, password, protocol, address, port`) accordingly to your own configuration.
-You will need also to create a new Facebook app and put your `ClientID` and `ClientSecret` at the respective constants located at `authenticating/service.go`.
+Before starting the server, you will need to configure the application domain/port, database settings and Facebook app credentials as well. In order to do it, you must go to the `Makefile` and change the environment variables exported under `start` command, accordingly to your own configuration.
 
-To start the API server just run `make start`, then it will be ready to be accessed at `localhost:8080`.
+To start the API server just run `make start`, then it will be ready to be accessed, by default, at `localhost:8080`.
 
 ### ...

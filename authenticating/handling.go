@@ -45,7 +45,7 @@ func (s *service) HandleFacebookCallback(w http.ResponseWriter, r *http.Request)
 		err := fmt.Errorf("invalid oauth state, expected '%s', got '%s'", s.state, state)
 		w.WriteHeader(http.StatusInternalServerError)
 		if err := json.NewEncoder(w).Encode(err); err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 		return
 	}
@@ -55,7 +55,7 @@ func (s *service) HandleFacebookCallback(w http.ResponseWriter, r *http.Request)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		if err := json.NewEncoder(w).Encode(err); err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 		return
 	}
@@ -73,7 +73,7 @@ func (s *service) HandleFacebookCallback(w http.ResponseWriter, r *http.Request)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		if err := json.NewEncoder(w).Encode(err); err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 		return
 	}
@@ -82,7 +82,7 @@ func (s *service) HandleFacebookCallback(w http.ResponseWriter, r *http.Request)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		if err := json.NewEncoder(w).Encode(err); err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 		return
 	}
@@ -91,7 +91,7 @@ func (s *service) HandleFacebookCallback(w http.ResponseWriter, r *http.Request)
 	if err = json.Unmarshal(body, &t); err != nil {
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		if err := json.NewEncoder(w).Encode(err); err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 		return
 	}
@@ -107,7 +107,7 @@ func (s *service) HandleFacebookCallback(w http.ResponseWriter, r *http.Request)
 	if err = travRepo.Store(&t); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		if err := json.NewEncoder(w).Encode(err); err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 		return
 	}
@@ -117,7 +117,7 @@ func (s *service) HandleFacebookCallback(w http.ResponseWriter, r *http.Request)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			if err := json.NewEncoder(w).Encode(err); err != nil {
-				panic(err)
+				log.Fatal(err)
 			}
 			return
 		}
@@ -132,7 +132,7 @@ func (s *service) HandleFacebookCallback(w http.ResponseWriter, r *http.Request)
 				err = errors.New("invalid user id")
 				w.WriteHeader(http.StatusInternalServerError)
 				if err := json.NewEncoder(w).Encode(err); err != nil {
-					panic(err)
+					log.Fatal(err)
 				}
 				return
 			}
@@ -141,7 +141,7 @@ func (s *service) HandleFacebookCallback(w http.ResponseWriter, r *http.Request)
 			if err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 				if err := json.NewEncoder(w).Encode(err); err != nil {
-					panic(err)
+					log.Fatal(err)
 				}
 				return
 			}
@@ -151,7 +151,7 @@ func (s *service) HandleFacebookCallback(w http.ResponseWriter, r *http.Request)
 			if err = fRepo.Store(&f); err != nil {
 				w.WriteHeader(http.StatusInternalServerError)
 				if err := json.NewEncoder(w).Encode(err); err != nil {
-					panic(err)
+					log.Fatal(err)
 				}
 				return
 			}

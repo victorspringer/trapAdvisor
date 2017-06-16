@@ -11,11 +11,6 @@ import (
 	"golang.org/x/oauth2/facebook"
 )
 
-const (
-	clientID     = "CLIENT_ID"
-	clientSecret = "CLIENT_SECRET"
-)
-
 // Service is the interface that provides Facebook authentication methods.
 type Service interface {
 	HandleFacebookLogin(http.ResponseWriter, *http.Request)
@@ -34,19 +29,12 @@ type service struct {
 func NewService() Service {
 	return &service{
 		config: &oauth2.Config{
-			ClientID:     clientID,
-			ClientSecret: clientSecret,
-			RedirectURL:  getDomain() + "/auth_callback",
+			ClientID:     os.Getenv("FB_CLIENT_ID"),
+			ClientSecret: os.Getenv("FB_CLIENT_SECRET"),
+			RedirectURL:  os.Getenv("DOMAIN") + "/auth_callback",
 			Scopes:       []string{"public_profile", "user_friends"},
 			Endpoint:     facebook.Endpoint,
 		},
 		state: fmt.Sprintf("%s", uuid.NewV4()),
 	}
-}
-
-func getDomain() string {
-	if os.Getenv("DOMAIN") != "" {
-		return os.Getenv("DOMAIN")
-	}
-	return "http://localhost:8080"
 }

@@ -6,22 +6,21 @@ import (
 	"os"
 )
 
-const (
-	driver   = "mysql"
-	user     = "root"
-	password = "morisquinho"
-	protocol = "tcp"
-	port     = "3306"
-)
-
 // DB is the database connection handler.
 var DB *sql.DB
 
 // Init intializes the database.
 func Init(env string) (*sql.DB, error) {
-	db, err := sql.Open(
-		driver, fmt.Sprintf("%v:%v@%v(%v:%v)/", user, password, protocol, getDatabaseAddr(), port),
+	var (
+		driver   = "mysql"
+		user     = os.Getenv("DB_USER")
+		password = os.Getenv("DB_PASS")
+		protocol = "tcp"
+		address  = os.Getenv("DB_ADDR")
+		port     = os.Getenv("DB_PORT")
 	)
+
+	db, err := sql.Open(driver, fmt.Sprintf("%v:%v@%v(%v:%v)/", user, password, protocol, address, port))
 	if err != nil {
 		return nil, err
 	}
@@ -168,11 +167,4 @@ func Init(env string) (*sql.DB, error) {
 	}
 
 	return db, nil
-}
-
-func getDatabaseAddr() string {
-	if os.Getenv("DBADDR") != "" {
-		return os.Getenv("DBADDR")
-	}
-	return "localhost"
 }

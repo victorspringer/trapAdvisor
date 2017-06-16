@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -27,7 +28,7 @@ func (s *service) StoreTrip(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		if err := json.NewEncoder(w).Encode(err); err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 		return
 	}
@@ -35,7 +36,7 @@ func (s *service) StoreTrip(w http.ResponseWriter, r *http.Request) {
 	if err = r.Body.Close(); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		if err := json.NewEncoder(w).Encode(err); err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 		return
 	}
@@ -43,7 +44,7 @@ func (s *service) StoreTrip(w http.ResponseWriter, r *http.Request) {
 	if err = json.Unmarshal(body, &t); err != nil {
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		if err := json.NewEncoder(w).Encode(err); err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 		return
 	}
@@ -52,7 +53,7 @@ func (s *service) StoreTrip(w http.ResponseWriter, r *http.Request) {
 	if err = repo.Store(&t); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		if err := json.NewEncoder(w).Encode(err); err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 		return
 	}
@@ -69,7 +70,7 @@ func (s *service) StoreTouristAttraction(w http.ResponseWriter, r *http.Request)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		if err := json.NewEncoder(w).Encode(err); err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 		return
 	}
@@ -77,7 +78,7 @@ func (s *service) StoreTouristAttraction(w http.ResponseWriter, r *http.Request)
 	if err = r.Body.Close(); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		if err := json.NewEncoder(w).Encode(err); err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 		return
 	}
@@ -85,7 +86,7 @@ func (s *service) StoreTouristAttraction(w http.ResponseWriter, r *http.Request)
 	if err = json.Unmarshal(body, &t); err != nil {
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		if err := json.NewEncoder(w).Encode(err); err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 		return
 	}
@@ -94,7 +95,7 @@ func (s *service) StoreTouristAttraction(w http.ResponseWriter, r *http.Request)
 	if err = repo.Store(&t); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		if err := json.NewEncoder(w).Encode(err); err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 		return
 	}
@@ -109,7 +110,7 @@ func (s *service) FindTrip(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		if err := json.NewEncoder(w).Encode(err); err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 		return
 	}
@@ -119,14 +120,14 @@ func (s *service) FindTrip(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		if err := json.NewEncoder(w).Encode(err); err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(t); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 }
 
@@ -137,7 +138,7 @@ func (s *service) FindTripByTravellerID(w http.ResponseWriter, r *http.Request) 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		if err := json.NewEncoder(w).Encode(err); err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 		return
 	}
@@ -147,14 +148,14 @@ func (s *service) FindTripByTravellerID(w http.ResponseWriter, r *http.Request) 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		if err := json.NewEncoder(w).Encode(err); err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(t); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 }
 
@@ -165,7 +166,7 @@ func (s *service) FindTouristAttraction(w http.ResponseWriter, r *http.Request) 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		if err := json.NewEncoder(w).Encode(err); err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 		return
 	}
@@ -175,14 +176,14 @@ func (s *service) FindTouristAttraction(w http.ResponseWriter, r *http.Request) 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		if err := json.NewEncoder(w).Encode(err); err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(t); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 }
 
@@ -193,7 +194,7 @@ func (s *service) FindTouristAttractionByTripID(w http.ResponseWriter, r *http.R
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		if err := json.NewEncoder(w).Encode(err); err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 		return
 	}
@@ -203,14 +204,14 @@ func (s *service) FindTouristAttractionByTripID(w http.ResponseWriter, r *http.R
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		if err := json.NewEncoder(w).Encode(err); err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(t); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 }
 
@@ -224,14 +225,14 @@ func (s *service) FindTouristAttractionByNamePart(w http.ResponseWriter, r *http
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		if err := json.NewEncoder(w).Encode(err); err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(t); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 }
 
@@ -243,14 +244,14 @@ func (s *service) FindMostVisitedTouristAttractions(w http.ResponseWriter, r *ht
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		if err := json.NewEncoder(w).Encode(err); err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(t); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 }
 
@@ -262,13 +263,13 @@ func (s *service) FindBestRatedTouristAttractions(w http.ResponseWriter, r *http
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		if err := json.NewEncoder(w).Encode(err); err != nil {
-			panic(err)
+			log.Fatal(err)
 		}
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(t); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 }
