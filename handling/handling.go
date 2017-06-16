@@ -2,6 +2,7 @@ package handling
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -12,6 +13,10 @@ import (
 	ta "github.com/victorspringer/trapAdvisor/touristattraction"
 	"github.com/victorspringer/trapAdvisor/trip"
 )
+
+func (s *service) Health(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "OK")
+}
 
 func (s *service) StoreTrip(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")

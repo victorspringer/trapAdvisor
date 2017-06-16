@@ -29,6 +29,7 @@ func Router() *mux.Router {
 	)
 
 	routes := []route{
+		route{"GET", "/health", "Health", hSvc.Health},
 		route{"GET", "/login", "Login", aSvc.HandleFacebookLogin},
 		route{"GET", "/auth_callback", "AuthCallback", aSvc.HandleFacebookCallback},
 		route{"GET", "/logout", "Logout", aSvc.HandleFacebookLogout},

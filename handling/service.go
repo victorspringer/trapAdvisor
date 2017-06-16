@@ -9,6 +9,7 @@ import (
 
 // Service is the interface that provides handling methods.
 type Service interface {
+	Health(http.ResponseWriter, *http.Request)
 	StoreTrip(http.ResponseWriter, *http.Request)
 	StoreTouristAttraction(http.ResponseWriter, *http.Request)
 	FindTrip(http.ResponseWriter, *http.Request)
