@@ -3,6 +3,7 @@ package authenticating
 import (
 	"fmt"
 	"net/http"
+	"os"
 
 	fb "github.com/huandu/facebook"
 	uuid "github.com/satori/go.uuid"
@@ -11,7 +12,6 @@ import (
 )
 
 const (
-	domain       = "http://localhost:8080"
 	clientID     = "CLIENT_ID"
 	clientSecret = "CLIENT_SECRET"
 )
@@ -36,10 +36,17 @@ func NewService() Service {
 		config: &oauth2.Config{
 			ClientID:     clientID,
 			ClientSecret: clientSecret,
-			RedirectURL:  domain + "/auth_callback",
+			RedirectURL:  getDomain() + "/auth_callback",
 			Scopes:       []string{"public_profile", "user_friends"},
 			Endpoint:     facebook.Endpoint,
 		},
 		state: fmt.Sprintf("%s", uuid.NewV4()),
 	}
+}
+
+func getDomain() string {
+	if os.Getenv("DOMAIN") != "" {
+		return os.Getenv("DOMAIN")
+	}
+	return "http://localhost:8080"
 }

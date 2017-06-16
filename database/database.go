@@ -3,14 +3,14 @@ package database
 import (
 	"database/sql"
 	"fmt"
+	"os"
 )
 
 const (
 	driver   = "mysql"
 	user     = "root"
-	password = ""
+	password = "morisquinho"
 	protocol = "tcp"
-	address  = "localhost"
 	port     = "3306"
 )
 
@@ -19,7 +19,9 @@ var DB *sql.DB
 
 // Init intializes the database.
 func Init(env string) (*sql.DB, error) {
-	db, err := sql.Open(driver, fmt.Sprintf("%v:%v@%v(%v:%v)/", user, password, protocol, address, port))
+	db, err := sql.Open(
+		driver, fmt.Sprintf("%v:%v@%v(%v:%v)/", user, password, protocol, getDatabaseAddr(), port),
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -166,4 +168,11 @@ func Init(env string) (*sql.DB, error) {
 	}
 
 	return db, nil
+}
+
+func getDatabaseAddr() string {
+	if os.Getenv("DBADDR") != "" {
+		return os.Getenv("DBADDR")
+	}
+	return "localhost"
 }

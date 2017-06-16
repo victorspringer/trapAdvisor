@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/victorspringer/trapAdvisor/database"
@@ -19,5 +20,12 @@ func main() {
 
 	router := routing.Router()
 
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Fatal(http.ListenAndServe(getPort(), router))
+}
+
+func getPort() string {
+	if os.Getenv("PORT") != "" {
+		return os.Getenv("PORT")
+	}
+	return ":8080"
 }

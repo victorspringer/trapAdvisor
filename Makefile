@@ -3,6 +3,6 @@ test:
 test-fast:
 	go test -v $$(go list ./... | grep -v /vendor/)
 build:
-	go get && go build -v -o bin/trapAdvisor
+	go get && go build -v -o bin/application
 start:
-	go get && go build -v -o bin/trapAdvisor && ./bin/trapAdvisor
+	go get && go build -v -o bin/application && ./bin/application
