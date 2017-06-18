@@ -25,7 +25,10 @@ func Router() *mux.Router {
 	aSvc := authenticating.NewService()
 
 	hSvc := handling.NewService(
-		persistence.NewTripRepository(), persistence.NewTouristAttractionRepository(),
+		persistence.NewTravellerRepository(),
+		persistence.NewFriendshipRepository(),
+		persistence.NewTripRepository(),
+		persistence.NewTouristAttractionRepository(),
 	)
 
 	routes := []route{
@@ -33,8 +36,12 @@ func Router() *mux.Router {
 		route{"GET", "/login", "Login", aSvc.HandleFacebookLogin},
 		route{"GET", "/auth_callback", "AuthCallback", aSvc.HandleFacebookCallback},
 		route{"GET", "/logout", "Logout", aSvc.HandleFacebookLogout},
+
 		route{"POST", "/v1/trip/store", "StoreTrip", aSvc.AuthMiddleware(hSvc.StoreTrip)},
 		route{"POST", "/v1/ta/store", "StoreTouristAttraction", aSvc.AuthMiddleware(hSvc.StoreTouristAttraction)},
+
+		route{"GET", "/v1/traveller/find/{id}", "FindTraveller", aSvc.AuthMiddleware(hSvc.FindTraveller)},
+		route{"GET", "/v1/friendship/find/traveller/{id}", "FindFriendshipByTravellerID", aSvc.AuthMiddleware(hSvc.FindFriendshipByTravellerID)},
 		route{"GET", "/v1/trip/find/{id}", "FindTrip", aSvc.AuthMiddleware(hSvc.FindTrip)},
 		route{"GET", "/v1/trip/find/traveller/{id}", "FindTripByTravellerID", aSvc.AuthMiddleware(hSvc.FindTripByTravellerID)},
 		route{"GET", "/v1/ta/find/{id}", "FindTouristAttraction", aSvc.AuthMiddleware(hSvc.FindTouristAttraction)},

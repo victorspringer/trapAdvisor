@@ -10,7 +10,6 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
-	"github.com/victorspringer/trapAdvisor/persistence"
 	ta "github.com/victorspringer/trapAdvisor/touristattraction"
 	"github.com/victorspringer/trapAdvisor/trip"
 )
@@ -43,8 +42,7 @@ func (s *service) StoreTrip(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	repo := persistence.NewTripRepository()
-	if err = repo.Store(&t); err != nil {
+	if err = s.tripRepo.Store(&t); err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -77,14 +75,65 @@ func (s *service) StoreTouristAttraction(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	repo := persistence.NewTouristAttractionRepository()
-	if err = repo.Store(&t); err != nil {
+	if err = s.taRepo.Store(&t); err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	w.WriteHeader(http.StatusCreated)
+}
+
+func (s *service) FindTraveller(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
+	id, err := strconv.Atoi(mux.Vars(r)["id"])
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	t, err := s.travRepo.Find(id)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(t); err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
+
+func (s *service) FindFriendshipByTravellerID(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+
+	id, err := strconv.Atoi(mux.Vars(r)["id"])
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	t, err := s.fRepo.FindByTravellerID(id)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(t); err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
 
 func (s *service) FindTrip(w http.ResponseWriter, r *http.Request) {
@@ -97,8 +146,7 @@ func (s *service) FindTrip(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	repo := persistence.NewTripRepository()
-	t, err := repo.Find(id)
+	t, err := s.tripRepo.Find(id)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusNotFound)
@@ -124,8 +172,7 @@ func (s *service) FindTripByTravellerID(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	repo := persistence.NewTripRepository()
-	t, err := repo.FindByTravellerID(id)
+	t, err := s.tripRepo.FindByTravellerID(id)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusNotFound)
@@ -151,8 +198,7 @@ func (s *service) FindTouristAttraction(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	repo := persistence.NewTouristAttractionRepository()
-	t, err := repo.Find(id)
+	t, err := s.taRepo.Find(id)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusNotFound)
@@ -178,8 +224,7 @@ func (s *service) FindTouristAttractionByTripID(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	repo := persistence.NewTouristAttractionRepository()
-	t, err := repo.FindByTripID(id)
+	t, err := s.taRepo.FindByTripID(id)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusNotFound)
@@ -200,8 +245,7 @@ func (s *service) FindTouristAttractionByNamePart(w http.ResponseWriter, r *http
 
 	namePart := mux.Vars(r)["namePart"]
 
-	repo := persistence.NewTouristAttractionRepository()
-	t, err := repo.FindByNamePart(namePart)
+	t, err := s.taRepo.FindByNamePart(namePart)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusNotFound)
@@ -220,8 +264,7 @@ func (s *service) FindTouristAttractionByNamePart(w http.ResponseWriter, r *http
 func (s *service) FindMostVisitedTouristAttractions(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
-	repo := persistence.NewTouristAttractionRepository()
-	t, err := repo.FindMostVisited()
+	t, err := s.taRepo.FindMostVisited()
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusNotFound)
@@ -240,8 +283,7 @@ func (s *service) FindMostVisitedTouristAttractions(w http.ResponseWriter, r *ht
 func (s *service) FindBestRatedTouristAttractions(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 
-	repo := persistence.NewTouristAttractionRepository()
-	t, err := repo.FindBestRated()
+	t, err := s.taRepo.FindBestRated()
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusNotFound)
