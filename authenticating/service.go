@@ -17,6 +17,7 @@ type Service interface {
 	HandleFacebookCallback(http.ResponseWriter, *http.Request)
 	HandleFacebookLogout(http.ResponseWriter, *http.Request)
 	AuthMiddleware(http.HandlerFunc) http.HandlerFunc
+	ValidateSession(int, string) error
 }
 
 type service struct {

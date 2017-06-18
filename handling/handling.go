@@ -26,35 +26,27 @@ func (s *service) StoreTrip(w http.ResponseWriter, r *http.Request) {
 
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusBadRequest)
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			log.Fatal(err)
-		}
 		return
 	}
 
 	if err = r.Body.Close(); err != nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			log.Fatal(err)
-		}
 		return
 	}
 
 	if err = json.Unmarshal(body, &t); err != nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusUnprocessableEntity)
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			log.Fatal(err)
-		}
 		return
 	}
 
 	repo := persistence.NewTripRepository()
 	if err = repo.Store(&t); err != nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			log.Fatal(err)
-		}
 		return
 	}
 
@@ -68,35 +60,27 @@ func (s *service) StoreTouristAttraction(w http.ResponseWriter, r *http.Request)
 
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusBadRequest)
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			log.Fatal(err)
-		}
 		return
 	}
 
 	if err = r.Body.Close(); err != nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			log.Fatal(err)
-		}
 		return
 	}
 
 	if err = json.Unmarshal(body, &t); err != nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusUnprocessableEntity)
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			log.Fatal(err)
-		}
 		return
 	}
 
 	repo := persistence.NewTouristAttractionRepository()
 	if err = repo.Store(&t); err != nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			log.Fatal(err)
-		}
 		return
 	}
 
@@ -108,27 +92,26 @@ func (s *service) FindTrip(w http.ResponseWriter, r *http.Request) {
 
 	id, err := strconv.Atoi(mux.Vars(r)["id"])
 	if err != nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusBadRequest)
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			log.Fatal(err)
-		}
 		return
 	}
 
 	repo := persistence.NewTripRepository()
 	t, err := repo.Find(id)
 	if err != nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusNotFound)
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			log.Fatal(err)
-		}
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(t); err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(t); err != nil {
-		log.Fatal(err)
-	}
 }
 
 func (s *service) FindTripByTravellerID(w http.ResponseWriter, r *http.Request) {
@@ -136,27 +119,26 @@ func (s *service) FindTripByTravellerID(w http.ResponseWriter, r *http.Request) 
 
 	id, err := strconv.Atoi(mux.Vars(r)["id"])
 	if err != nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusBadRequest)
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			log.Fatal(err)
-		}
 		return
 	}
 
 	repo := persistence.NewTripRepository()
 	t, err := repo.FindByTravellerID(id)
 	if err != nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusNotFound)
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			log.Fatal(err)
-		}
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(t); err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(t); err != nil {
-		log.Fatal(err)
-	}
 }
 
 func (s *service) FindTouristAttraction(w http.ResponseWriter, r *http.Request) {
@@ -164,27 +146,26 @@ func (s *service) FindTouristAttraction(w http.ResponseWriter, r *http.Request) 
 
 	id, err := strconv.Atoi(mux.Vars(r)["id"])
 	if err != nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusBadRequest)
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			log.Fatal(err)
-		}
 		return
 	}
 
 	repo := persistence.NewTouristAttractionRepository()
 	t, err := repo.Find(id)
 	if err != nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusNotFound)
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			log.Fatal(err)
-		}
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(t); err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(t); err != nil {
-		log.Fatal(err)
-	}
 }
 
 func (s *service) FindTouristAttractionByTripID(w http.ResponseWriter, r *http.Request) {
@@ -192,27 +173,26 @@ func (s *service) FindTouristAttractionByTripID(w http.ResponseWriter, r *http.R
 
 	id, err := strconv.Atoi(mux.Vars(r)["id"])
 	if err != nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusBadRequest)
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			log.Fatal(err)
-		}
 		return
 	}
 
 	repo := persistence.NewTouristAttractionRepository()
 	t, err := repo.FindByTripID(id)
 	if err != nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusNotFound)
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			log.Fatal(err)
-		}
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(t); err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(t); err != nil {
-		log.Fatal(err)
-	}
 }
 
 func (s *service) FindTouristAttractionByNamePart(w http.ResponseWriter, r *http.Request) {
@@ -223,17 +203,18 @@ func (s *service) FindTouristAttractionByNamePart(w http.ResponseWriter, r *http
 	repo := persistence.NewTouristAttractionRepository()
 	t, err := repo.FindByNamePart(namePart)
 	if err != nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusNotFound)
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			log.Fatal(err)
-		}
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(t); err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(t); err != nil {
-		log.Fatal(err)
-	}
 }
 
 func (s *service) FindMostVisitedTouristAttractions(w http.ResponseWriter, r *http.Request) {
@@ -242,17 +223,18 @@ func (s *service) FindMostVisitedTouristAttractions(w http.ResponseWriter, r *ht
 	repo := persistence.NewTouristAttractionRepository()
 	t, err := repo.FindMostVisited()
 	if err != nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusNotFound)
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			log.Fatal(err)
-		}
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(t); err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(t); err != nil {
-		log.Fatal(err)
-	}
 }
 
 func (s *service) FindBestRatedTouristAttractions(w http.ResponseWriter, r *http.Request) {
@@ -261,15 +243,16 @@ func (s *service) FindBestRatedTouristAttractions(w http.ResponseWriter, r *http
 	repo := persistence.NewTouristAttractionRepository()
 	t, err := repo.FindBestRated()
 	if err != nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusNotFound)
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			log.Fatal(err)
-		}
+		return
+	}
+
+	if err := json.NewEncoder(w).Encode(t); err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(t); err != nil {
-		log.Fatal(err)
-	}
 }

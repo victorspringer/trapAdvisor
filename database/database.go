@@ -55,6 +55,7 @@ func Init(env string) (*sql.DB, error) {
 		CREATE TABLE IF NOT EXISTS traveller (
 			id BIGINT UNSIGNED NOT NULL,
 			name VARCHAR(250) NOT NULL,
+			sessionToken VARCHAR(250) NOT NULL,
 			PRIMARY KEY (id),
 			UNIQUE INDEX traveller_id_unique (id ASC)
 		) ENGINE = InnoDB
@@ -133,12 +134,12 @@ func Init(env string) (*sql.DB, error) {
 	}
 
 	if env == "test" {
-		_, err = db.Exec("INSERT INTO traveller VALUES (123, 'Morisquinho')")
+		_, err = db.Exec("INSERT INTO traveller VALUES (123, 'Morisquinho', 'test12345')")
 		if err != nil {
 			return nil, err
 		}
 
-		_, err = db.Exec("INSERT INTO traveller VALUES (1234, 'Ludwig')")
+		_, err = db.Exec("INSERT INTO traveller VALUES (1234, 'Ludwig', 'test12345')")
 		if err != nil {
 			return nil, err
 		}

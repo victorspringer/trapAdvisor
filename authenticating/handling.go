@@ -12,6 +12,7 @@ import (
 	"time"
 
 	fb "github.com/huandu/facebook"
+	uuid "github.com/satori/go.uuid"
 	"github.com/victorspringer/trapAdvisor/friendship"
 	"github.com/victorspringer/trapAdvisor/persistence"
 	"github.com/victorspringer/trapAdvisor/traveller"
@@ -21,7 +22,9 @@ import (
 func (s *service) HandleFacebookLogin(w http.ResponseWriter, r *http.Request) {
 	u, err := url.Parse(s.config.Endpoint.AuthURL)
 	if err != nil {
-		log.Fatal("Parse: ", err)
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 
 	parameters := url.Values{}
@@ -43,20 +46,16 @@ func (s *service) HandleFacebookCallback(w http.ResponseWriter, r *http.Request)
 	state := r.FormValue("state")
 	if state != s.state {
 		err := fmt.Errorf("invalid oauth state, expected '%s', got '%s'", s.state, state)
+		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			log.Fatal(err)
-		}
 		return
 	}
 
 	code := r.FormValue("code")
 	token, err := s.config.Exchange(oauth2.NoContext, code)
 	if err != nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			log.Fatal(err)
-		}
 		return
 	}
 
@@ -71,28 +70,22 @@ func (s *service) HandleFacebookCallback(w http.ResponseWriter, r *http.Request)
 
 	trav, err := s.session.Get("/me", param)
 	if err != nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			log.Fatal(err)
-		}
 		return
 	}
 
 	body, err := json.Marshal(trav)
 	if err != nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			log.Fatal(err)
-		}
 		return
 	}
 
 	var t traveller.Traveller
 	if err = json.Unmarshal(body, &t); err != nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusUnprocessableEntity)
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			log.Fatal(err)
-		}
 		return
 	}
 
@@ -104,21 +97,19 @@ func (s *service) HandleFacebookCallback(w http.ResponseWriter, r *http.Request)
 		firstLogin = true
 	}
 
+	t.SessionToken = fmt.Sprintf("%s", uuid.NewV4())
+
 	if err = travRepo.Store(&t); err != nil {
+		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		if err := json.NewEncoder(w).Encode(err); err != nil {
-			log.Fatal(err)
-		}
 		return
 	}
 
 	if firstLogin {
 		friends, err := s.session.Get("/me/friends", fb.Params{"access_token": url.QueryEscape(token.AccessToken), "fields": "id"})
 		if err != nil {
+			log.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
-			if err := json.NewEncoder(w).Encode(err); err != nil {
-				log.Fatal(err)
-			}
 			return
 		}
 
@@ -130,29 +121,23 @@ func (s *service) HandleFacebookCallback(w http.ResponseWriter, r *http.Request)
 			id, ok := friends.Get(fmt.Sprintf("data.%v.id", idx)).(string)
 			if !ok {
 				err = errors.New("invalid user id")
+				log.Println(err)
 				w.WriteHeader(http.StatusInternalServerError)
-				if err := json.NewEncoder(w).Encode(err); err != nil {
-					log.Fatal(err)
-				}
 				return
 			}
 
 			fID, err := strconv.Atoi(id)
 			if err != nil {
+				log.Println(err)
 				w.WriteHeader(http.StatusInternalServerError)
-				if err := json.NewEncoder(w).Encode(err); err != nil {
-					log.Fatal(err)
-				}
 				return
 			}
 
 			f.FriendID = fID
 
 			if err = fRepo.Store(&f); err != nil {
+				log.Println(err)
 				w.WriteHeader(http.StatusInternalServerError)
-				if err := json.NewEncoder(w).Encode(err); err != nil {
-					log.Fatal(err)
-				}
 				return
 			}
 
@@ -161,22 +146,40 @@ func (s *service) HandleFacebookCallback(w http.ResponseWriter, r *http.Request)
 	}
 
 	expiration := time.Now().Add(30 * 24 * time.Hour)
-	cookie := http.Cookie{Name: "travellerID", Value: strconv.Itoa(t.ID), Path: "/", Expires: expiration}
-	http.SetCookie(w, &cookie)
+
+	cookieTravellerID := http.Cookie{Name: "travellerID", Value: strconv.Itoa(t.ID), Path: "/", Expires: expiration}
+	http.SetCookie(w, &cookieTravellerID)
+
+	cookieSessionToken := http.Cookie{Name: "sessionToken", Value: t.SessionToken, Path: "/", Expires: expiration}
+	http.SetCookie(w, &cookieSessionToken)
 
 	w.WriteHeader(http.StatusOK)
 }
 
 func (s *service) HandleFacebookLogout(w http.ResponseWriter, r *http.Request) {
-	cookie, err := r.Cookie("travellerID")
-	if err != nil {
-		http.Error(w, http.StatusText(401), 401)
-		return
+	cookies := []string{"travellerID", "sessionToken"}
+
+	for _, c := range cookies {
+		cookie, err := r.Cookie(c)
+		if err != nil {
+			log.Println(err)
+			http.Error(w, http.StatusText(401), 401)
+			return
+		}
+
+		cookie.Path = "/"
+		cookie.MaxAge = -1
+		http.SetCookie(w, cookie)
 	}
 
-	cookie.Path = "/"
-	cookie.MaxAge = -1
-	http.SetCookie(w, cookie)
-
 	w.WriteHeader(http.StatusOK)
+}
+
+func (s *service) ValidateSession(id int, sessionToken string) error {
+	repo := persistence.NewTravellerRepository()
+	if err := repo.FindBySessionToken(id, sessionToken); err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -38,7 +38,7 @@ func TestTravellerRepository(t *testing.T) {
 			"ValidTravellerInsertion",
 			&travellerRepository{},
 			args{
-				&traveller.Traveller{ID: 12345, Name: "Rudolf"},
+				&traveller.Traveller{ID: 12345, Name: "Rudolf", SessionToken: "test12345"},
 			},
 			"Rudolf",
 			false,
@@ -47,7 +47,7 @@ func TestTravellerRepository(t *testing.T) {
 			"ValidTravellerUpdate",
 			&travellerRepository{},
 			args{
-				&traveller.Traveller{ID: 12345, Name: "Timo"},
+				&traveller.Traveller{ID: 12345, Name: "Timo", SessionToken: "test12345"},
 			},
 			"Timo",
 			false,
@@ -62,6 +62,11 @@ func TestTravellerRepository(t *testing.T) {
 			traveller, err := tt.r.Find(12345)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("travellerRepository.Find() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			err = tt.r.FindBySessionToken(12345, "test12345")
+			if (err != nil) != tt.wantErr {
+				t.Errorf("travellerRepository.FindBySessionToken() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if traveller.Name != tt.want {
