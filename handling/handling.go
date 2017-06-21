@@ -10,12 +10,17 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
+	"github.com/victorspringer/trapAdvisor/database"
 	ta "github.com/victorspringer/trapAdvisor/touristattraction"
 	"github.com/victorspringer/trapAdvisor/trip"
 )
 
 func (s *service) Health(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "OK")
+	if err := database.DB.Ping(); err != nil {
+		fmt.Fprintf(w, err.Error())
+	} else {
+		fmt.Fprintf(w, "OK")
+	}
 }
 
 func (s *service) StoreTrip(w http.ResponseWriter, r *http.Request) {
