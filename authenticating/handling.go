@@ -45,7 +45,7 @@ func (s *service) HandleFacebookCallback(w http.ResponseWriter, r *http.Request)
 
 	state := r.FormValue("state")
 	if state != s.state {
-		err := fmt.Errorf("invalid oauth state, expected '%s', got '%s'", s.state, state)
+		err := fmt.Errorf("invalid oauth state, expected '%v', got '%v'", s.state, state)
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -97,7 +97,7 @@ func (s *service) HandleFacebookCallback(w http.ResponseWriter, r *http.Request)
 		firstLogin = true
 	}
 
-	t.SessionToken = fmt.Sprintf("%s", uuid.NewV4())
+	t.SessionToken = fmt.Sprintf("%v", uuid.NewV4())
 
 	if err = travRepo.Store(&t); err != nil {
 		log.Println(err)

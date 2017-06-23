@@ -36,6 +36,6 @@ func NewService() Service {
 			Scopes:       []string{"public_profile", "user_friends"},
 			Endpoint:     facebook.Endpoint,
 		},
-		state: fmt.Sprintf("%s", uuid.NewV4()),
+		state: fmt.Sprintf("%v", uuid.NewV4()),
 	}
 }

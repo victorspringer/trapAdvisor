@@ -29,8 +29,6 @@ func main() {
 		log.Fatal(err)
 		return
 	}
-	database.DB.SetMaxIdleConns(0)
-	database.DB.SetMaxOpenConns(500)
 	defer database.DB.Close()
 
 	router := routing.Router()
