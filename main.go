@@ -29,7 +29,7 @@ func main() {
 		log.Fatal(err)
 		return
 	}
-	database.DB.SetConnMaxLifetime(0)
+	database.DB.SetMaxIdleConns(0)
 	defer database.DB.Close()
 
 	router := routing.Router()
