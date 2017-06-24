@@ -14,7 +14,7 @@ import (
 
 func main() {
 	var err error
-	if os.Getenv("DOMAIN") == "" || os.Getenv("PORT") == "" ||
+	if os.Getenv("ENV") == "" || os.Getenv("DOMAIN") == "" || os.Getenv("PORT") == "" ||
 		os.Getenv("DB_USER") == "" || os.Getenv("DB_ADDR") == "" || os.Getenv("DB_PORT") == "" ||
 		os.Getenv("FB_CLIENT_ID") == "" || os.Getenv("FB_CLIENT_SECRET") == "" {
 		err = errors.New("empty environment variable(s)")
@@ -24,7 +24,7 @@ func main() {
 		return
 	}
 
-	database.DB, err = database.Init("prod")
+	database.DB, err = database.Init(os.Getenv("ENV"))
 	if err != nil {
 		log.Fatal(err)
 		return

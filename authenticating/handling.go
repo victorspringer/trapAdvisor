@@ -7,12 +7,14 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"strconv"
 	"strings"
 	"time"
 
 	fb "github.com/huandu/facebook"
 	uuid "github.com/satori/go.uuid"
+	"github.com/victorspringer/trapAdvisor/database"
 	"github.com/victorspringer/trapAdvisor/friendship"
 	"github.com/victorspringer/trapAdvisor/persistence"
 	"github.com/victorspringer/trapAdvisor/traveller"
@@ -90,6 +92,19 @@ func (s *service) HandleFacebookCallback(w http.ResponseWriter, r *http.Request)
 	}
 
 	travRepo := persistence.NewTravellerRepository()
+
+	_, err = travRepo.Find(0)
+	if err != nil {
+		if err.Error() == "Error 1046: No database selected" {
+			database.DB.Close()
+			database.DB, err = database.Init(os.Getenv("ENV"))
+			if err != nil {
+				log.Println(err)
+			}
+		} else if err.Error() != "sql: no rows in result set" {
+			log.Println(err)
+		}
+	}
 
 	firstLogin := false
 	_, err = travRepo.Find(t.ID)
@@ -177,7 +192,21 @@ func (s *service) HandleFacebookLogout(w http.ResponseWriter, r *http.Request) {
 
 func (s *service) ValidateSession(id int, sessionToken string) error {
 	repo := persistence.NewTravellerRepository()
-	if err := repo.FindBySessionToken(id, sessionToken); err != nil {
+
+	_, err := repo.Find(0)
+	if err != nil {
+		if err.Error() == "Error 1046: No database selected" {
+			database.DB.Close()
+			database.DB, err = database.Init(os.Getenv("ENV"))
+			if err != nil {
+				log.Println(err)
+			}
+		} else if err.Error() != "sql: no rows in result set" {
+			log.Println(err)
+		}
+	}
+
+	if err = repo.FindBySessionToken(id, sessionToken); err != nil {
 		return err
 	}
 

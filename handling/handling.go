@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 
 	"github.com/gorilla/mux"
@@ -16,11 +17,22 @@ import (
 )
 
 func (s *service) Health(w http.ResponseWriter, r *http.Request) {
-	if err := database.DB.Ping(); err != nil {
-		fmt.Fprintf(w, err.Error())
-	} else {
-		fmt.Fprintf(w, "OK")
+	_, err := s.travRepo.Find(0)
+	if err != nil {
+		if err.Error() == "Error 1046: No database selected" {
+			database.DB.Close()
+			database.DB, err = database.Init(os.Getenv("ENV"))
+			if err != nil {
+				fmt.Fprintf(w, "Database connection error")
+				return
+			}
+		} else if err.Error() != "sql: no rows in result set" {
+			fmt.Fprintf(w, "Database connection error")
+			return
+		}
 	}
+
+	fmt.Fprintf(w, "OK")
 }
 
 func (s *service) StoreTrip(w http.ResponseWriter, r *http.Request) {
