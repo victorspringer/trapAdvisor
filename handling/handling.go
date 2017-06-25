@@ -65,7 +65,22 @@ func (s *service) StoreTrip(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var tripID string
+	if t.ID == 0 {
+		trips, err := s.tripRepo.FindByTravellerID(t.TravellerID)
+		if err != nil {
+			log.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		tripID = strconv.Itoa(trips[len(trips)-1].ID)
+	} else {
+		tripID = strconv.Itoa(t.ID)
+	}
+
 	w.WriteHeader(http.StatusCreated)
+	w.Write([]byte(tripID))
 }
 
 func (s *service) StoreTouristAttraction(w http.ResponseWriter, r *http.Request) {
@@ -98,7 +113,17 @@ func (s *service) StoreTouristAttraction(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	tas, err := s.taRepo.FindByTripID(t.TripID)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	taID := strconv.Itoa(tas[len(tas)-1].ID)
+
 	w.WriteHeader(http.StatusCreated)
+	w.Write([]byte(taID))
 }
 
 func (s *service) FindTraveller(w http.ResponseWriter, r *http.Request) {
