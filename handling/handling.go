@@ -123,7 +123,7 @@ func (s *service) StoreTouristAttraction(w http.ResponseWriter, r *http.Request)
 	taID := strconv.Itoa(tas[len(tas)-1].ID)
 
 	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte(`{"tripId": ` + taID + `}`))
+	w.Write([]byte(`{"touristAttractionId": ` + taID + `}`))
 }
 
 func (s *service) FindTraveller(w http.ResponseWriter, r *http.Request) {
