@@ -183,9 +183,13 @@ func (s *service) HandleFacebookCallback(w http.ResponseWriter, r *http.Request)
 
 	w.WriteHeader(http.StatusOK)
 
-	const callback = `
+	callback := `
 		<html>
-			<script>history.back()</script>
+			<script>
+				localStorage.setItem('taTravellerID', ` + strconv.Itoa(t.ID) + `)
+				localStorage.setItem('taSessionToken', ` + t.SessionToken + `)
+				history.back()
+			</script>
 		</html>
 	`
 	w.Write([]byte(callback))
