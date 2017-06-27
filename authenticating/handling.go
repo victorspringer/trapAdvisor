@@ -43,8 +43,6 @@ func (s *service) HandleFacebookLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *service) HandleFacebookCallback(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-
 	state := r.FormValue("state")
 	if state != s.state {
 		err := fmt.Errorf("invalid oauth state, expected '%v', got '%v'", s.state, state)
@@ -55,14 +53,7 @@ func (s *service) HandleFacebookCallback(w http.ResponseWriter, r *http.Request)
 
 	if r.FormValue("error") == "access_denied" {
 		log.Println("user rejected the facebook app subscription")
-		w.WriteHeader(http.StatusOK)
-
-		const callback = `
-			<html>
-				<script>history.go(-2)</script>
-			</html>
-		`
-		w.Write([]byte(callback))
+		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
 
@@ -182,17 +173,6 @@ func (s *service) HandleFacebookCallback(w http.ResponseWriter, r *http.Request)
 	http.SetCookie(w, &cookieSessionToken)
 
 	w.WriteHeader(http.StatusOK)
-
-	callback := `
-		<html>
-			<script>
-				localStorage.setItem('taTravellerID', '` + strconv.Itoa(t.ID) + `')
-				localStorage.setItem('taSessionToken', '` + t.SessionToken + `')
-				history.back()
-			</script>
-		</html>
-	`
-	w.Write([]byte(callback))
 }
 
 func (s *service) HandleFacebookLogout(w http.ResponseWriter, r *http.Request) {
