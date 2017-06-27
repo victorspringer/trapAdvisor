@@ -186,8 +186,8 @@ func (s *service) HandleFacebookCallback(w http.ResponseWriter, r *http.Request)
 	callback := `
 		<html>
 			<script>
-				localStorage.setItem('taTravellerID', ` + strconv.Itoa(t.ID) + `)
-				localStorage.setItem('taSessionToken', ` + t.SessionToken + `)
+				localStorage.setItem('taTravellerID', '` + strconv.Itoa(t.ID) + `')
+				localStorage.setItem('taSessionToken', '` + t.SessionToken + `')
 				history.back()
 			</script>
 		</html>
