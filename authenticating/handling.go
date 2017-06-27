@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"html/template"
 	"log"
 	"net/http"
 	"net/url"
@@ -63,12 +62,7 @@ func (s *service) HandleFacebookCallback(w http.ResponseWriter, r *http.Request)
 				<script>history.go(-2)</script>
 			</html>
 		`
-		tmpl := template.New("callback")
-		var err error
-		if tmpl, err = tmpl.Parse(callback); err != nil {
-			log.Println(err)
-		}
-		tmpl.Execute(os.Stdout, callback)
+		w.Write([]byte(callback))
 		return
 	}
 
@@ -194,11 +188,7 @@ func (s *service) HandleFacebookCallback(w http.ResponseWriter, r *http.Request)
 			<script>history.back()</script>
 		</html>
 	`
-	tmpl := template.New("callback")
-	if tmpl, err = tmpl.Parse(callback); err != nil {
-		log.Println(err)
-	}
-	tmpl.Execute(os.Stdout, callback)
+	w.Write([]byte(callback))
 }
 
 func (s *service) HandleFacebookLogout(w http.ResponseWriter, r *http.Request) {
