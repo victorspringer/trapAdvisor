@@ -169,6 +169,22 @@ func (s *service) HandleFacebookCallback(w http.ResponseWriter, r *http.Request)
 	http.SetCookie(w, &cookieSessionToken)
 
 	w.WriteHeader(http.StatusOK)
+
+	const callback = `
+		<html>
+			<script>history.back()</script>
+		</html>
+	`
+	w.Write([]byte(callback))
+}
+
+func (s *service) HandleFacebookRejectionCallback(w http.ResponseWriter, r *http.Request) {
+	const callback = `
+		<html>
+			<script>history.go(-2)</script>
+		</html>
+	`
+	w.Write([]byte(callback))
 }
 
 func (s *service) HandleFacebookLogout(w http.ResponseWriter, r *http.Request) {
