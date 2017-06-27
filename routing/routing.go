@@ -35,7 +35,6 @@ func Router() *mux.Router {
 		route{"GET", "/health", "Health", hSvc.Health},
 		route{"GET", "/login", "Login", aSvc.HandleFacebookLogin},
 		route{"GET", "/auth_callback", "AuthCallback", aSvc.HandleFacebookCallback},
-		route{"GET", "/rejection_callback", "AuthRejectionCallback", aSvc.HandleFacebookRejectionCallback},
 		route{"GET", "/logout", "Logout", aSvc.HandleFacebookLogout},
 
 		route{"POST", "/v1/trip/store", "StoreTrip", aSvc.AuthMiddleware(hSvc.StoreTrip)},

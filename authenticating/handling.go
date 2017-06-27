@@ -53,6 +53,19 @@ func (s *service) HandleFacebookCallback(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	if r.FormValue("error") == "access_denied" {
+		log.Println("user rejected the facebook app subscription")
+		w.WriteHeader(http.StatusOK)
+
+		const callback = `
+			<html>
+				<script>history.go(-2)</script>
+			</html>
+		`
+		w.Write([]byte(callback))
+		return
+	}
+
 	code := r.FormValue("code")
 	token, err := s.config.Exchange(oauth2.NoContext, code)
 	if err != nil {
@@ -173,15 +186,6 @@ func (s *service) HandleFacebookCallback(w http.ResponseWriter, r *http.Request)
 	const callback = `
 		<html>
 			<script>history.back()</script>
-		</html>
-	`
-	w.Write([]byte(callback))
-}
-
-func (s *service) HandleFacebookRejectionCallback(w http.ResponseWriter, r *http.Request) {
-	const callback = `
-		<html>
-			<script>history.go(-2)</script>
 		</html>
 	`
 	w.Write([]byte(callback))

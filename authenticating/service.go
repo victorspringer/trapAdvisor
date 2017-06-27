@@ -15,7 +15,6 @@ import (
 type Service interface {
 	HandleFacebookLogin(http.ResponseWriter, *http.Request)
 	HandleFacebookCallback(http.ResponseWriter, *http.Request)
-	HandleFacebookRejectionCallback(http.ResponseWriter, *http.Request)
 	HandleFacebookLogout(http.ResponseWriter, *http.Request)
 	AuthMiddleware(http.HandlerFunc) http.HandlerFunc
 	ValidateSession(int, string) error
