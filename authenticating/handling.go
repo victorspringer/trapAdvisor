@@ -44,7 +44,7 @@ func (s *service) HandleFacebookLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *service) HandleFacebookCallback(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	state := r.FormValue("state")
 	if state != s.state {
