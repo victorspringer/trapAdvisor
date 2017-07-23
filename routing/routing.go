@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 	"github.com/victorspringer/trapAdvisor/authenticating"
 	"github.com/victorspringer/trapAdvisor/handling"
 	"github.com/victorspringer/trapAdvisor/persistence"
@@ -56,6 +57,7 @@ func Router() *mux.Router {
 
 		handler = route.HandlerFunc
 		handler = logger(handler, route.Name)
+		handler = cors.Default().Handler(handler)
 
 		router.Methods(route.Method).Path(route.Pattern).Name(route.Name).Handler(handler)
 	}
